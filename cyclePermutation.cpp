@@ -1,77 +1,84 @@
 #include <iostream>
-#include <limits.h>
-#include <list>
 #include <vector>
 #include <algorithm>
+#include <iostream>
+#include <limits.h>
+#include <list>
+#include <chrono>
+
 using namespace std;
 
-class Graph {
-    vector<vector<int>> adj;
-    int V; 
-    bool hasCyclePermutation(vector<int>& perm);
-    bool hasCycleUtil(int v, vector<bool>& visited, int parent);
-
+class Graph
+{
 public:
-    Graph(int V);
+    Graph(int n) : adjList(n) {}
 
-    void addEdge(int v, int w);
-    void showGraph();
-    bool isCyclic();
+    void addEdge(int u, int v)
+    {
+        adjList[u].push_back(v);
+    }
+
+    int size() const
+    {
+        return adjList.size();
+    }
+
+    const std::vector<int> &getAdjList(int node) const
+    {
+        return adjList[node];
+    }
+
+    void showGraph() const
+    {
+        for (int i = 0; i < adjList.size(); i++)
+        {
+            std::cout << "Vertice " << i << ": ";
+            for (int j = 0; j < adjList[i].size(); j++)
+            {
+                std::cout << adjList[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+private:
+    std::vector<std::vector<int>> adjList;
 };
 
-Graph::Graph(int V) {
-    this->V = V;
-    adj = vector<vector<int>>(V, vector<int>(V, 0));
-}
+int countCycles(Graph& graph) {
+    int n = graph.size();
+    int totalCycles = 0;
 
-void Graph::addEdge(int v, int w) {
-    adj[v][w] = 1;
-    adj[w][v] = 1;
-}
+    for (int len = 3; len <= n; len++) {
+        std::vector<bool> v(n);
+        std::fill(v.end() - len, v.end(), true);
 
-void Graph::showGraph() {
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            cout << adj[i][j] << " ";
-        }
-        cout << "\n";
+        do {
+            std::vector<int> nodes;
+            for (int i = 0; i < n; i++) {
+                if (v[i]) {
+                    nodes.push_back(i);
+                }
+            }
+
+            do {
+                bool isCycle = true;
+                for (int i = 0; i < len; i++) {
+                    int node = nodes[i];
+                    int nextNode = nodes[(i + 1) % len];
+                    if (std::find(graph.getAdjList(node).begin(), graph.getAdjList(node).end(), nextNode) == graph.getAdjList(node).end()) {
+                        isCycle = false;
+                        break;
+                    }
+                }
+                if (isCycle) {
+                    totalCycles++;
+                }
+            } while (std::next_permutation(nodes.begin(), nodes.end()));
+        } while (std::next_permutation(v.begin(), v.end()));
     }
-}
 
-bool Graph::isCyclic() {
-    vector<int> perm(V);
-    for (int i = 0; i < V; i++) {
-        perm[i] = i;
-    }
-
-    do {
-        if (hasCyclePermutation(perm)) return true;
-    } while (next_permutation(perm.begin(), perm.end()));
-
-    return false;
-}
-
-bool Graph::hasCyclePermutation(vector<int>& perm) {
-    vector<bool> visited(V, false);
-    for (int i = 0; i < V; ++i) {
-        if (!visited[perm[i]] && hasCycleUtil(perm[i], visited, -1))
-            return true;
-    }
-    return false;
-}
-
-bool Graph::hasCycleUtil(int v, vector<bool>& visited, int parent) {
-    visited[v] = true;
-    for (int i = 0; i < V; ++i) {
-        if (adj[v][i]) {
-            if (!visited[i]) {
-                if (hasCycleUtil(i, visited, v))
-                    return true;
-            } else if (i != parent)
-                return true;
-        }
-    }
-    return false;
+    return totalCycles;
 }
 
 int main()
@@ -83,23 +90,19 @@ int main()
     g1.addEdge(0, 3);
     g1.addEdge(3, 4);
 
-    cout << "Grafo 1:\n";
-
+    cout << "Graph 1:\n";
     g1.showGraph();
-    
-    if (g1.isCyclic()) cout << "Contem ciclo" << endl;
-    else cout << "Nao contem ciclo" << endl;
+
+    cout << "Cycles quantity " << countCycles(g1) << "\n";
 
     Graph g2(3);
     g2.addEdge(0, 1);
     g2.addEdge(1, 2);
 
-    cout << "\nGrafo 2:\n";
-
+    cout << "\nGraph 2:\n";
     g2.showGraph();
 
-    if(g2.isCyclic()) cout << "Contem ciclo" << endl;
-    else cout << "Nao contem ciclo" << endl;
+    cout << "Cycles quantity " << countCycles(g2) << "\n";
 
     return 0;
 }

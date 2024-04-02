@@ -2,6 +2,8 @@
 #include <limits.h>
 #include <list>
 #include <vector>
+#include <chrono>
+
 using namespace std;
 
 class Graph {
@@ -14,7 +16,7 @@ public:
 
     void addEdge(int v, int w);
     void showGraph();
-    bool isCyclic();
+    int isCyclic();
 };
 
 Graph::Graph(int V) {
@@ -49,7 +51,8 @@ bool Graph::isCyclicUtil(int v, bool visited[], int parent) {
     return false;
 }
 
-bool Graph::isCyclic() {
+int Graph::isCyclic() {
+    int result=0;
     bool *visited = new bool[V];
     for (int i = 0; i < V; i++){
         visited[i] = false;
@@ -59,42 +62,40 @@ bool Graph::isCyclic() {
 
         if (!visited[u]){
             if (isCyclicUtil(u, visited, -1)){
-                return true;
+                result++ ;
             }
         }
     }
 
-    return false;
+    return result;
 }
 
 
 
 int main()
 {
+    
     Graph g1(5);
+    
     g1.addEdge(1, 0);
     g1.addEdge(0, 2);
     g1.addEdge(2, 1);
     g1.addEdge(0, 3);
     g1.addEdge(3, 4);
-
-    cout << "Grafo 1:\n";
-
-    g1.showGraph();
     
-    if (g1.isCyclic()) cout << "Contem ciclo" << endl;
-    else cout << "Nao contem ciclo" << endl;
+    g1.showGraph();
+    cout << "\nGraph 1:\n";
+    
+    cout << "Cycles quantity " << g1.isCyclic() << "\n";
 
     Graph g2(3);
     g2.addEdge(0, 1);
     g2.addEdge(1, 2);
 
-    cout << "\nGrafo 2:\n";
-
+    cout << "\nGraph 2:\n";
     g2.showGraph();
 
-    if(g2.isCyclic()) cout << "Contem ciclo" << endl;
-    else cout << "Nao contem ciclo" << endl;
-
+    cout << "\nCycles quantity " << g2.isCyclic() << "\n";
+  
     return 0;
 }
