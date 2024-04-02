@@ -93,7 +93,7 @@ int main()
     cout << "Graph 1:\n";
     g1.showGraph();
 
-    cout << "Cycles quantity " << countCycles(g1) << "\n";
+    cout << "\nCycles quantity " << countCycles(g1) << "\n";
 
     Graph g2(3);
     g2.addEdge(0, 1);
@@ -102,7 +102,7 @@ int main()
     cout << "\nGraph 2:\n";
     g2.showGraph();
 
-    cout << "Cycles quantity " << countCycles(g2) << "\n";
+    cout << "\nCycles quantity " << countCycles(g2) << "\n";
 
     return 0;
 }

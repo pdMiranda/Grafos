@@ -77,6 +77,7 @@ int main()
     
     Graph g1(5);
     
+    cout << "\nGraph 1:\n";
     g1.addEdge(1, 0);
     g1.addEdge(0, 2);
     g1.addEdge(2, 1);
@@ -84,9 +85,8 @@ int main()
     g1.addEdge(3, 4);
     
     g1.showGraph();
-    cout << "\nGraph 1:\n";
     
-    cout << "Cycles quantity " << g1.isCyclic() << "\n";
+    cout << "\nCycles quantity " << g1.isCyclic() << "\n";
 
     Graph g2(3);
     g2.addEdge(0, 1);
